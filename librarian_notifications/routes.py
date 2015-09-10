@@ -15,13 +15,14 @@ from bottle_utils.ajax import roca_view
 
 from librarian_core.contrib.templates.renderer import template
 
-from .notifications import get_notifications, NotificationGroup
+from .notifications import (filter_notifications,
+                            get_notifications,
+                            NotificationGroup)
 
 
 @roca_view('notification_list', '_notification_list', template_func=template)
 def notification_list():
-    notifications = get_notifications()
-    groups = NotificationGroup.group_by(notifications,
+    groups = NotificationGroup.group_by(get_notifications(),
                                         by=('category', 'read_at'))
     return dict(groups=groups)
 
@@ -29,7 +30,7 @@ def notification_list():
 @roca_view('notification_list', '_notification_list', template_func=template)
 def notifications_read():
     notification_ids = request.forms.getall('mark_read')
-    notifications = get_notifications(notification_ids)
+    notifications = filter_notifications(notification_ids)
     read_at = datetime.datetime.now()
     for notification in notifications:
         if notification.dismissable:
