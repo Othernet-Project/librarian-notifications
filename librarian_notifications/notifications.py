@@ -156,6 +156,10 @@ class Notification(object):
                  dismissable=self.dismissable,
                  read_at=self._read_at,
                  user=self.user)
+
+        for key in ('notification_group_{0}'.format(request.session.id),
+                    'notification_count_{0}'.format(request.session.id)):
+            request.app.supervisor.exts.cache.delete(key)
         return self
 
     def delete(self):
@@ -291,7 +295,7 @@ def get_notifications():
             yield notification
 
 
-def get_notification_count():
+def _get_notification_count():
     db = request.db.sessions
     user = request.user.username if request.user.is_authenticated else None
     if user:
@@ -307,3 +311,15 @@ def get_notification_count():
     query.where += '(dismissable = 0 OR read_at IS NULL)'
     db.query(query, *args)
     return db.result.count
+
+
+def get_notification_count():
+    key = 'notification_count_{0}'.format(request.session.id)
+    if request.app.supervisor.exts.is_installed('cache'):
+        count = request.app.supervisor.exts.cache.get(key)
+        if count:
+            return count
+
+    count = _get_notification_count()
+    request.app.supervisor.exts.cache.set(key, count)
+    return count

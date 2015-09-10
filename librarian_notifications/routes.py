@@ -22,8 +22,15 @@ from .notifications import (filter_notifications,
 
 @roca_view('notification_list', '_notification_list', template_func=template)
 def notification_list():
+    key = 'notification_group_{0}'.format(request.session.id)
+    if request.app.supervisor.exts.is_installed('cache'):
+        groups = request.app.supervisor.exts.cache.get(key)
+        if groups:
+            return dict(groups=groups)
+
     groups = NotificationGroup.group_by(get_notifications(),
                                         by=('category', 'read_at'))
+    request.app.supervisor.exts.cache.set(key, groups)
     return dict(groups=groups)
 
 
