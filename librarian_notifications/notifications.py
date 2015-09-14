@@ -249,14 +249,18 @@ def to_dict(row):
     return dict((key, row[key]) for key in row.keys())
 
 
-def filter_notifications(notification_ids, chunk_size=100):
+def filter_notifications(notification_ids, chunk_size=100, db=None):
     """Return all those notifications that the current user has access to. If
     `notification_ids` is specified, the result set will be further limited to
     the specified ids."""
-    db = request.db.sessions
+    db = db or request.db.sessions
     user = request.user.username if request.user.is_authenticated else None
-    id_groups = (notification_ids[i:i + chunk_size]
-                 for i in range(0, len(notification_ids), chunk_size))
+    if notification_ids:
+        id_groups = (notification_ids[i:i + chunk_size]
+                     for i in range(0, len(notification_ids), chunk_size))
+    else:
+        id_groups = [[]]
+
     for id_list in id_groups:
         if user:
             args = [user]
@@ -267,8 +271,10 @@ def filter_notifications(notification_ids, chunk_size=100):
             query = db.Select(sets='notifications', where='user IS NULL')
 
         query.where += '(dismissable = 0 OR read_at IS NULL)'
-        query.where += db.sqlin.__func__('notification_id', id_list)
-        args += id_list
+        if id_list:
+            query.where += db.sqlin.__func__('notification_id', id_list)
+            args += id_list
+
         db.query(query, *args)
         for row in db.results:
             notification = Notification(**to_dict(row))
@@ -276,8 +282,8 @@ def filter_notifications(notification_ids, chunk_size=100):
                 yield notification
 
 
-def get_notifications():
-    db = request.db.sessions
+def get_notifications(db=None):
+    db = db = request.db.sessions
     user = request.user.username if request.user.is_authenticated else None
     if user:
         args = [user]
@@ -295,8 +301,8 @@ def get_notifications():
             yield notification
 
 
-def _get_notification_count():
-    db = request.db.sessions
+def _get_notification_count(db):
+    db = db or request.db.sessions
     user = request.user.username if request.user.is_authenticated else None
     if user:
         args = [user]
@@ -310,16 +316,18 @@ def _get_notification_count():
                           where='user IS NULL')
     query.where += '(dismissable = 0 OR read_at IS NULL)'
     db.query(query, *args)
-    return db.result.count
+    unread_count = db.result.count
+    unread_count -= len(request.user.options.get('notifications', {}))
+    return unread_count
 
 
-def get_notification_count():
+def get_notification_count(db=None):
     key = 'notification_count_{0}'.format(request.session.id)
     if request.app.supervisor.exts.is_installed('cache'):
         count = request.app.supervisor.exts.cache.get(key)
         if count:
             return count
 
-    count = _get_notification_count()
+    count = _get_notification_count(db)
     request.app.supervisor.exts.cache.set(key, count)
     return count
