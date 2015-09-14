@@ -249,39 +249,6 @@ def to_dict(row):
     return dict((key, row[key]) for key in row.keys())
 
 
-def filter_notifications(notification_ids, chunk_size=100, db=None):
-    """Return all those notifications that the current user has access to. If
-    `notification_ids` is specified, the result set will be further limited to
-    the specified ids."""
-    db = db or request.db.sessions
-    user = request.user.username if request.user.is_authenticated else None
-    if notification_ids:
-        id_groups = (notification_ids[i:i + chunk_size]
-                     for i in range(0, len(notification_ids), chunk_size))
-    else:
-        id_groups = [[]]
-
-    for id_list in id_groups:
-        if user:
-            args = [user]
-            query = db.Select(sets='notifications',
-                              where='(user IS NULL OR user = ?)')
-        else:
-            args = []
-            query = db.Select(sets='notifications', where='user IS NULL')
-
-        query.where += '(dismissable = 0 OR read_at IS NULL)'
-        if id_list:
-            query.where += db.sqlin.__func__('notification_id', id_list)
-            args += id_list
-
-        db.query(query, *args)
-        for row in db.results:
-            notification = Notification(**to_dict(row))
-            if not notification.is_read:
-                yield notification
-
-
 def get_notifications(db=None):
     db = db = request.db.sessions
     user = request.user.username if request.user.is_authenticated else None

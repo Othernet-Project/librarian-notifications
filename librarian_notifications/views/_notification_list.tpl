@@ -14,10 +14,9 @@
     </span>
     % endif
     ${h.form('post', _class="notification-body")}
-        % for notification in group.notifications:
-            <input type="hidden" name="mark_read" value="${notification.notification_id}" />
-        % endfor
-        <div class="message">${notification_templates[notification.category](group)}</div>
+        <input type="hidden" name="category" value="${group.category}" />
+        <input type="hidden" name="read_at" value="${group.read_at if group.read_at else ''}" />
+        <div class="message">${notification_templates[group.category](group)}</div>
         <span class="timestamp">${group.created_at.date()}</span>
         <span class="icon ${group.category}"></span>
         % if not group.is_read:

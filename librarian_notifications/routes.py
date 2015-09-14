@@ -15,9 +15,7 @@ from bottle_utils.ajax import roca_view
 
 from librarian_core.contrib.templates.renderer import template
 
-from .notifications import (filter_notifications,
-                            get_notifications,
-                            NotificationGroup)
+from .notifications import get_notifications, NotificationGroup
 
 
 @roca_view('notification_list', '_notification_list', template_func=template)
@@ -34,18 +32,27 @@ def notification_list():
     return dict(groups=groups)
 
 
-@roca_view('notification_list', '_notification_list', template_func=template)
-def notifications_read():
-    notification_ids = request.forms.getall('mark_read')
-    notifications = filter_notifications(notification_ids)
-    read_at = datetime.datetime.now()
+def mark_read(notifications):
+    now = datetime.datetime.now()
     for notification in notifications:
         if notification.dismissable:
-            notification.mark_read(read_at)
+            notification.mark_read(now)
 
+
+@roca_view('notification_list', '_notification_list', template_func=template)
+def notifications_read():
+    category = request.forms.get('category')
+    # needs None instead of empty string to compare against null columns
+    read_at = request.forms.get('read_at') or None
     groups = NotificationGroup.group_by(get_notifications(),
                                         by=('category', 'read_at'))
-    return dict(groups=groups)
+    for group in groups:
+        if not category or (group.category == category and
+                            group.read_at == read_at):
+            mark_read(group.notifications)
+            break
+
+    return dict(groups=[grp for grp in groups if not grp.is_read])
 
 
 def routes(app):
