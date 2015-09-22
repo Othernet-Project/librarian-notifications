@@ -1,7 +1,7 @@
 from .notifications import Notification
-from .menuitems import NotificationMenuItem
+from .menuitems import NotificationsMenuItem
 
 
 def initialize(supervisor):
     supervisor.exts.notifications = Notification
-    supervisor.exts.menuitems.register(NotificationMenuItem)
+    supervisor.exts.menuitems.register(NotificationsMenuItem)
