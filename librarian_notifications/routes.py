@@ -15,7 +15,8 @@ from bottle_utils.ajax import roca_view
 
 from librarian_core.contrib.templates.renderer import template
 
-from .notifications import get_notifications, NotificationGroup
+from .helpers import get_notifications
+from .notifications import NotificationGroup
 
 
 @roca_view('notification_list', '_notification_list', template_func=template)
@@ -51,6 +52,10 @@ def notifications_read():
                             group.read_at == read_at):
             mark_read(group.notifications)
             break
+
+    for key_tmpl in ('notification_group_{0}', 'notification_count_{0}'):
+        key = key_tmpl.format(request.session.id)
+        request.app.supervisor.exts.cache.delete(key)
 
     return dict(groups=[grp for grp in groups if not grp.is_read])
 
