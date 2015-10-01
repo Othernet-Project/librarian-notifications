@@ -157,9 +157,8 @@ class Notification(object):
                  read_at=self._read_at,
                  user=self.user)
 
-        for key in ('notification_group_{0}'.format(request.session.id),
-                    'notification_count_{0}'.format(request.session.id)):
-            request.app.supervisor.exts.cache.delete(key)
+        for key in ('notification_group', 'notification_count'):
+            request.app.supervisor.exts.cache.invalidate(key)
         return self
 
     def delete(self):
