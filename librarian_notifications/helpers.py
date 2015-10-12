@@ -48,10 +48,9 @@ def _get_notification_count(db):
 
 def get_notification_count(db=None):
     key = 'notification_count_{0}'.format(request.session.id)
-    if request.app.supervisor.exts.is_installed('cache'):
-        count = request.app.supervisor.exts.cache.get(key)
-        if count:
-            return count
+    count = request.app.supervisor.exts(onfail=None).cache.get(key)
+    if count:
+        return count
 
     count = _get_notification_count(db)
     request.app.supervisor.exts.cache.set(key, count)
