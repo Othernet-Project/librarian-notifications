@@ -19,15 +19,4 @@ ${_('Notifications')}
 </div>
 % endif
 
-% if not groups:
-<p class="empty">
-    ## Translators, note that appears on notifications page when there are no new notifications
-    ${_('There are no new notifications')}
-</p>
-% endif
-
-% if groups:
-<ul id="notification-list" class="notification-list">
-    ${notification_list.body()}
-</ul>
-% endif
+${notification_list.body()}
