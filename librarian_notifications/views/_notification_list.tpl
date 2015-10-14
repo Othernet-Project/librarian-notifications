@@ -45,7 +45,6 @@
         % endfor
     </ul>
 % else:
-    <% request.app.supervisor.exts.notifications.send('This is a test') %>
     <p class="empty">
         ## Translators, note that appears on notifications page when there are no new notifications
         ${_('There are no new notifications')}
