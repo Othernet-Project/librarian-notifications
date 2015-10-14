@@ -21,6 +21,16 @@
 %>
 
 % if groups:
+    <form method="post">
+        <p class="subtitle-buttons">
+            <button name="action" value="mark_read_all" class="clean" tabindex="1">
+                <span class="icon icon-no-outline"></span>
+                ## Translators, used as label for discarding all unread notifications
+                <span>${_('Mark all as read')}</span>
+            </button>
+        </p>
+    </form>
+
     <ul id="notification-list" class="notification-list">
         % for group in groups:
             <li class="notification">

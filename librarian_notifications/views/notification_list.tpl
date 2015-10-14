@@ -6,24 +6,9 @@
 ${_('Messages')}
 </%block>
 
-% if groups:
-<div class="h-bar">
-    <div class="form actions">
-        <form method="post">
-            <h2>
-                <span class="icon icon-message-alert"></span> 
-                ${_('Messages')}
-            </h2>
-            <p class="subtitle-buttons">
-                <button name="action" value="mark_read_all" class="clean" tabindex="1">
-                    <span class="icon icon-no-outline"></span>
-                    ## Translators, used as label for discarding all unread notifications
-                    <span>${_('Mark all as read')}</span>
-                </button>
-            </p>
-        </form>
-    </div>
-</div>
-% endif
+<h2>
+    <span class="icon icon-message-alert"></span> 
+    ${_('Messages')}
+</h2>
 
 ${notification_list.body()}
