@@ -19,7 +19,7 @@ ${_('Messages')}
                 ${_('Messages')}
             </h2>
             <p class="subtitle-buttons">
-                <button name="action" value="mark_read_all" class="clean">
+                <button name="action" value="mark_read_all" class="clean" tabindex="1">
                     <span class="icon icon-no-outline"></span>
                     ## Translators, used as label for discarding all unread notifications
                     <span>${_('Mark all as read')}</span>
