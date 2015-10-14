@@ -31,7 +31,9 @@
                     <div class="message">${notification_templates.get(group.category, default_template)(group)}</div>
                     <p class="notification-meta">
                         <span class="notification-icon ${group.category}"></span>
-                        <span class="timestamp">${group.created_at.date()}</span>
+                        <span class="timestamp">
+                            <time datetime="${group.created_at.isoformat()}Z">${group.created_at.strftime('%Y-%m-%d %H:%M')}</time>
+                        </span>
                     </p>
                 </div>
                 % if not group.is_read:

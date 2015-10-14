@@ -6,10 +6,6 @@
 ${_('Messages')}
 </%block>
 
-<%block name="extra_head">
-    <link rel="stylesheet" href="${assets['css/notifications']}">
-</%block>
-
 % if groups:
 <div class="h-bar">
     <div class="form actions">
