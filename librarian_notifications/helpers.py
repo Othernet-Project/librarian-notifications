@@ -1,5 +1,7 @@
 from bottle import request
 
+from librarian_core.contrib.templates.decorators import template_helper
+
 from .notifications import Notification
 
 
@@ -46,6 +48,7 @@ def _get_notification_count(db):
     return unread_count
 
 
+@template_helper
 def get_notification_count(db=None):
     key = 'notification_count_{0}'.format(request.session.id)
     count = request.app.supervisor.exts(onfail=None).cache.get(key)
