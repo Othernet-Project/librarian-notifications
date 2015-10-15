@@ -20,11 +20,9 @@ setup(
     long_description=read('README.rst'),
     install_requires=[
         'librarian_core',
-        'librarian_menu',
     ],
     dependency_links=[
         'git+ssh://git@github.com/Outernet-Project/librarian-core.git#egg=librarian_core-0.1',
-        'git+ssh://git@github.com/Outernet-Project/librarian-menu.git#egg=librarian_menu-0.1',
     ],
     classifiers=[
         'Development Status :: 3 - Alpha',
