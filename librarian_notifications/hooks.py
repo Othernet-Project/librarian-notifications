@@ -1,10 +1,8 @@
 from .notifications import Notification
-from .menuitems import NotificationsMenuItem
 
 
 def initialize(supervisor):
     supervisor.exts.notifications = Notification
-    supervisor.exts.menuitems.register(NotificationsMenuItem)
 
     def invalidate_notification_cache(notification):
         # for now jsut invalidate the whole cache, no matter if it's a
