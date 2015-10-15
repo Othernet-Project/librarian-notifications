@@ -26,6 +26,7 @@ class TestNotification(object):
                               priority=mod.Notification.URGENT,
                               expiration=15,
                               dismissable=False,
+                              groupable=False,
                               user='username',
                               group='groupname',
                               db=db)
@@ -36,6 +37,7 @@ class TestNotification(object):
                                           created_at='now',
                                           expires_at='tomorrow',
                                           dismissable=False,
+                                          groupable=False,
                                           priority=1,
                                           user='username',
                                           message='content added',
@@ -245,6 +247,7 @@ class TestNotification(object):
             created_at='today',
             expires_at=None,
             dismissable=True,
+            groupable=True,
             priority=mod.Notification.NORMAL,
             user=None,
             message='msg',

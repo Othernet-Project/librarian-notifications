@@ -79,6 +79,7 @@ class Notification(object):
                        priority=priority,
                        expires_at=cls.calc_expiry(expiration),
                        dismissable=dismissable,
+                       groupable=groupable,
                        read_at=None,
                        user=user,
                        db=db)
@@ -167,6 +168,7 @@ class Notification(object):
                       priority=self.priority,
                       expires_at=self.expires_at,
                       dismissable=self.dismissable,
+                      groupable=self.groupable,
                       read_at=self._read_at,
                       user=self.user)
         return self
