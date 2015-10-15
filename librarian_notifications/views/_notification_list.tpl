@@ -21,7 +21,7 @@
 %>
 
 % if groups:
-    <form method="post">
+    <form method="post" action="${i18n_url('notifications:list')}">
         <p class="subtitle-buttons">
             <button name="action" value="mark_read_all" class="clean" tabindex="1">
                 <span class="icon icon-no-outline"></span>
