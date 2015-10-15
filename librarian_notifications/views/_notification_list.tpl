@@ -35,7 +35,7 @@
         % for group in groups:
             <li class="notification">
             <form method="post" action="${i18n_url('notifications:list')}">
-                <input type="hidden" name="notification_id" value="${group.notification_id}" />
+                <input type="hidden" name="notification_id" value="${group.first_id}" />
                 <div class="notification-body">
                     <div class="message">${notification_templates.get(group.category, default_template)(group)}</div>
                     <p class="notification-meta">

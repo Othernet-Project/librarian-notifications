@@ -193,7 +193,6 @@ class Notification(object):
 class NotificationGroup(object):
 
     proxied_attrs = (
-        'notification_id',
         'created_at',
         'expires_at',
         'read_at',
@@ -215,13 +214,22 @@ class NotificationGroup(object):
     def __getattr__(self, name):
         if name in self.proxied_attrs:
             try:
-                return getattr(self.notifications[0], name)
+                return getattr(self.notifications[-1], name)
             except IndexError:
                 raise ValueError('Notification group has 0 notifications.')
 
         cls_name = self.__class__.__name__
         msg = "'{0}' object has no attribute '{1}'".format(cls_name, name)
         raise AttributeError(msg)
+
+    @property
+    def first_id(self):
+        """Returns the ``notification_id`` of the very first notification in
+        the group."""
+        try:
+            return getattr(self.notifications[0], 'notification_id')
+        except IndexError:
+            raise ValueError('Notification group has 0 notifications.')
 
     def add(self, notification):
         self.notifications.append(notification)

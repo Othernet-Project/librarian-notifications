@@ -50,7 +50,7 @@ def notifications_read():
         if read_all:
             # all groups should be marked as read
             mark_read(group.notifications)
-        elif group.notification_id == first_notification_id:
+        elif group.first_id == first_notification_id:
             # match groups using the id of the first notification object, so
             # even if new notifications are added to the group since the last
             # fetch by the client, it will still be able to find the correct
