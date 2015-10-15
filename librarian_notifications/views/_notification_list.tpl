@@ -12,7 +12,7 @@
     <p class="titles">${', '.join([item.safe_message('title') for idx, item in enumerate(group.notifications) if idx < 20])}</p>
 </%def>
 
-<% 
+<%
     notification_templates = {
         'default': default,
         'content': content,
@@ -35,8 +35,7 @@
         % for group in groups:
             <li class="notification">
             <form method="post" action="${i18n_url('notifications:list')}">
-                <input type="hidden" name="category" value="${group.category}" />
-                <input type="hidden" name="read_at" value="${group.read_at if group.read_at else ''}" />
+                <input type="hidden" name="notification_id" value="${group.notification_id}" />
                 <div class="notification-body">
                     <div class="message">${notification_templates.get(group.category, default_template)(group)}</div>
                     <p class="notification-meta">
@@ -47,7 +46,7 @@
                     </p>
                 </div>
                 % if not group.is_read:
-                    <button class="notification-delete clean" type="submit" tabindex="${loop.index + 2}">
+                    <button name="action" value="mark_read" class="notification-delete clean" type="submit" tabindex="${loop.index + 2}">
                         <span class="icon icon-no"></span>
                         <span class="notification-delete-label">${_('Dismiss')}</span>
                     </button>

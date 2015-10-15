@@ -42,14 +42,19 @@ def mark_read(notifications):
 
 @roca_view('notification_list', '_notification_list', template_func=template)
 def notifications_read():
-    category = request.forms.get('category')
-    # needs None instead of empty string to compare against null columns
-    read_at = request.forms.get('read_at') or None
+    read_all = request.forms.get('action') == 'mark_read_all'
+    first_notification_id = request.forms.get('notification_id')
     groups = NotificationGroup.group_by(get_notifications(),
                                         by=('category', 'read_at'))
     for group in groups:
-        if not category or (group.category == category and
-                            group.read_at == read_at):
+        if read_all:
+            # all groups should be marked as read
+            mark_read(group.notifications)
+        elif group.notification_id == first_notification_id:
+            # match groups using the id of the first notification object, so
+            # even if new notifications are added to the group since the last
+            # fetch by the client, it will still be able to find the correct
+            # group.
             mark_read(group.notifications)
             break
 
