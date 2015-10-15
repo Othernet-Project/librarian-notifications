@@ -45,3 +45,13 @@
   font-weight: bold;
   margin-bottom: 0.2rem;
 }
+
+/* line 50, ../../../src/scss/notifications.scss */
+#notifications-tab {
+  padding-top: 2.6rem;
+}
+/* line 54, ../../../src/scss/notifications.scss */
+#notifications-tab .subtitle-buttons {
+  top: 0;
+  right: 0;
+}
