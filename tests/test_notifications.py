@@ -332,6 +332,8 @@ class TestNotificationGroup(object):
         fixtures = [dict(category='content'),
                     dict(category='content'),
                     dict(category='content', groupable=False),
+                    dict(),
+                    dict(),
                     dict(category='alarm'),
                     dict(category='alarm')]
         for idx, options in enumerate(fixtures):
@@ -343,7 +345,9 @@ class TestNotificationGroup(object):
                                                   **options))
         groups = mod.NotificationGroup.group_by(iter(notifications),
                                                 by=('category', 'read_at'))
-        assert len(groups) == 3
-        assert groups[0].count == 2
-        assert groups[1].count == 1
-        assert groups[2].count == 2
+        assert len(groups) == 5
+        assert groups[0].count == 2  # content
+        assert groups[1].count == 1  # content - not groupable
+        assert groups[2].count == 1  # empty
+        assert groups[3].count == 1  # empty
+        assert groups[4].count == 2  # alarm

@@ -200,6 +200,11 @@ class NotificationGroup(object):
         'category',
         'priority',
     )
+    # columns that require a value other than NULL in order to pass the check
+    # for similarity
+    value_required = (
+        'category',
+    )
 
     def __init__(self, notifications=None):
         self.notifications = notifications or []
@@ -225,11 +230,12 @@ class NotificationGroup(object):
     def is_similar(self, notification, attrs):
         """Returns whether `notification` is similar to existing members of the
         group or not."""
-        if not notification.groupable:
-            # notification not allowed to be grouped with similar notifications
-            return False
+        def are_equal(name):
+            value = getattr(self, name)
+            other = getattr(notification, name)
+            is_value_required = name in self.value_required
+            return (value or not is_value_required) and value == other
 
-        are_equal = lambda n: getattr(notification, n) == getattr(self, n)
         return all([are_equal(attr_name) for attr_name in attrs])
 
     @classmethod
@@ -248,7 +254,8 @@ class NotificationGroup(object):
         else:
             group_list.append(group)
             for notification in notifications:
-                if not group.is_similar(notification, attrs=by):
+                if (not notification.groupable or
+                        not group.is_similar(notification, attrs=by)):
                     group = cls()
                     group_list.append(group)
 
