@@ -193,6 +193,7 @@ class Notification(object):
 class NotificationGroup(object):
 
     proxied_attrs = (
+        'notification_id',
         'created_at',
         'expires_at',
         'read_at',
@@ -214,7 +215,7 @@ class NotificationGroup(object):
     def __getattr__(self, name):
         if name in self.proxied_attrs:
             try:
-                return getattr(self.notifications[-1], name)
+                return getattr(self.notifications[0], name)
             except IndexError:
                 raise ValueError('Notification group has 0 notifications.')
 
