@@ -329,16 +329,21 @@ class TestNotificationGroup(object):
 
     def test_group_by(self):
         notifications = []
-        categories = ['content', 'content', 'alarm', 'alarm']
-        for idx, category in enumerate(categories):
+        fixtures = [dict(category='content'),
+                    dict(category='content'),
+                    dict(category='content', groupable=False),
+                    dict(category='alarm'),
+                    dict(category='alarm')]
+        for idx, options in enumerate(fixtures):
             notifications.append(mod.Notification('uid' + str(idx),
                                                   'msg',
                                                   'now',
                                                   user='joe',
-                                                  category=category,
-                                                  db=mock.Mock()))
+                                                  db=mock.Mock(),
+                                                  **options))
         groups = mod.NotificationGroup.group_by(iter(notifications),
                                                 by=('category', 'read_at'))
-        assert len(groups) == 2
+        assert len(groups) == 3
         assert groups[0].count == 2
-        assert groups[1].count == 2
+        assert groups[1].count == 1
+        assert groups[2].count == 2

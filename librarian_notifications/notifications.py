@@ -40,7 +40,7 @@ class Notification(object):
 
     def __init__(self, notification_id, message, created_at, category=None,
                  icon=None, priority=NORMAL, expires_at=None, dismissable=True,
-                 read_at=None, user=None, db=None):
+                 groupable=True, read_at=None, user=None, db=None):
         self.notification_id = notification_id
         try:
             self.message = json.loads(message)
@@ -53,6 +53,7 @@ class Notification(object):
         self.priority = priority
         self.expires_at = expires_at
         self.dismissable = dismissable
+        self.groupable = groupable
         self._read_at = read_at
         self.user = user
         self.db = db or request.db.notifications
@@ -63,7 +64,8 @@ class Notification(object):
 
     @classmethod
     def send(cls, message, category=None, icon=None, priority=NORMAL,
-             expiration=0, dismissable=True, user=None, group=None, db=None):
+             expiration=0, dismissable=True, groupable=True, user=None,
+             group=None, db=None):
         # TODO: if group is not None, query all users of the specified group
         # and create a notification instance for each member of the group
         if not isinstance(message, basestring):
@@ -223,6 +225,10 @@ class NotificationGroup(object):
     def is_similar(self, notification, attrs):
         """Returns whether `notification` is similar to existing members of the
         group or not."""
+        if not notification.groupable:
+            # notification not allowed to be grouped with similar notifications
+            return False
+
         are_equal = lambda n: getattr(notification, n) == getattr(self, n)
         return all([are_equal(attr_name) for attr_name in attrs])
 
