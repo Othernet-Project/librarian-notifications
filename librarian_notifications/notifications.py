@@ -16,6 +16,8 @@ import uuid
 from bottle import request
 from bottle_utils.common import basestring, unicode
 
+from librarian_core.utils import utcnow
+
 
 NOTIFICATION_COLS = (
     'notification_id',
@@ -73,7 +75,7 @@ class Notification(object):
 
         instance = cls(notification_id=cls.generate_unique_id(),
                        message=message,
-                       created_at=datetime.datetime.now(),
+                       created_at=utcnow(),
                        category=category,
                        icon=icon,
                        priority=priority,
@@ -93,8 +95,7 @@ class Notification(object):
 
     @property
     def has_expired(self):
-        return (self.expires_at is not None and
-                self.expires_at < datetime.datetime.utcnow())
+        return self.expires_at is not None and self.expires_at < utcnow()
 
     @property
     def is_shared(self):
@@ -128,7 +129,7 @@ class Notification(object):
         self._read_at = read_at
 
     def mark_read(self, read_at=None):
-        read_at = datetime.datetime.now() if read_at is None else read_at
+        read_at = utcnow() if read_at is None else read_at
         if not self.is_read:
             if self.is_shared:
                 # shared notifications store the datetime of reading in the
@@ -187,7 +188,7 @@ class Notification(object):
         if expiration == 0:
             return None
 
-        return datetime.datetime.utcnow() + datetime.timedelta(expiration)
+        return utcnow() + datetime.timedelta(expiration)
 
 
 class NotificationGroup(object):

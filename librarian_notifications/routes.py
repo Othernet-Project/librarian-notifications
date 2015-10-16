@@ -8,12 +8,11 @@ This software is free software licensed under the terms of GPLv3. See COPYING
 file that comes with the source code, or http://www.gnu.org/licenses/gpl.txt.
 """
 
-import datetime
-
 from bottle import request
 from bottle_utils.ajax import roca_view
 
 from librarian_core.contrib.templates.renderer import template
+from librarian_core.utils import utcnow
 
 from .helpers import get_notifications
 from .notifications import NotificationGroup
@@ -34,7 +33,7 @@ def notification_list():
 
 
 def mark_read(notifications):
-    now = datetime.datetime.now()
+    now = utcnow()
     for notification in notifications:
         if notification.dismissable:
             notification.mark_read(now)
