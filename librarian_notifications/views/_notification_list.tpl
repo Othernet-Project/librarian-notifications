@@ -33,7 +33,7 @@
 
     <ul id="notification-list" class="notification-list">
         % for group in groups:
-            <li class="notification">
+        <li class="notification">
             <form method="post" action="${i18n_url('notifications:list')}">
                 <input type="hidden" name="notification_id" value="${group.first_id}" />
                 <div class="notification-body">
@@ -46,13 +46,13 @@
                     </p>
                 </div>
                 % if not group.is_read:
-                    <button name="action" value="mark_read" class="notification-delete clean" type="submit" tabindex="${loop.index + 2}">
-                        <span class="icon icon-no"></span>
-                        <span class="notification-delete-label">${_('Dismiss')}</span>
-                    </button>
+                <button name="action" value="mark_read" class="notification-delete clean" type="submit" tabindex="${loop.index + 2}">
+                    <span class="icon icon-no"></span>
+                    <span class="notification-delete-label">${_('Dismiss')}</span>
+                </button>
                 % endif
-                </form>
-            </li>
+            </form>
+        </li>
         % endfor
     </ul>
 % else:
