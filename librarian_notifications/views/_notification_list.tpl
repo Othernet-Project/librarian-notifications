@@ -41,7 +41,7 @@
                     <p class="notification-meta">
                         <span class="notification-icon ${group.category}"></span>
                         <span class="timestamp">
-                            <time datetime="${group.created_at.isoformat()}Z">${group.created_at.strftime('%Y-%m-%d %H:%M')}</time>
+                            <time datetime="${group.created_at.isoformat()}">${group.created_at.strftime('%Y-%m-%d %H:%M')}</time>
                         </span>
                     </p>
                 </div>
