@@ -15,10 +15,10 @@ def get_notifications(db=None):
     if user:
         args = [user]
         query = db.Select(sets='notifications',
-                          where='(user IS NULL OR user = ?)')
+                          where='(username IS NULL OR username = ?)')
     else:
         args = []
-        query = db.Select(sets='notifications', where='user IS NULL')
+        query = db.Select(sets='notifications', where='username IS NULL')
 
     query.where += '(dismissable = 0 OR read_at IS NULL)'
     db.query(query, *args)
@@ -35,12 +35,12 @@ def _get_notification_count(db):
         args = [user]
         query = db.Select('COUNT(*) as count',
                           sets='notifications',
-                          where='(user IS NULL OR user = ?)')
+                          where='(username IS NULL OR username = ?)')
     else:
         args = []
         query = db.Select('COUNT(*) as count',
                           sets='notifications',
-                          where='user IS NULL')
+                          where='username IS NULL')
     query.where += '(dismissable = 0 OR read_at IS NULL)'
     db.query(query, *args)
     unread_count = db.result.count

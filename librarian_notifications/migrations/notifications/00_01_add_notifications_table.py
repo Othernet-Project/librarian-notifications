@@ -1,7 +1,7 @@
 SQL = """
 create table notifications
 (
-    notification_id varchar primary_key unique not null,   -- notification id
+    notification_id varchar primary key,                   -- notification id
     message varchar,                                       -- notification message
     category varchar,                                      -- notification category
     icon varchar,                                          -- css class that provides icon
@@ -9,9 +9,9 @@ create table notifications
     created_at timestamp not null,                         -- timestamp when notification was created
     read_at timestamp,                                     -- timestamp when notification was read
     expires_at timestamp,                                  -- timestamp when notification expires
-    dismissable boolean not null default 0,                -- indicates whether notification can be marked as read
-    groupable boolean not null default 1,                  -- indicates whether notification can be gathered into groups
-    user varchar                                           -- username of recipient
+    dismissable boolean not null default false,            -- indicates whether notification can be marked as read
+    groupable boolean not null default true,               -- indicates whether notification can be gathered into groups
+    username varchar                                       -- username of recipient
 );
 """
 

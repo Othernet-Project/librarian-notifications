@@ -29,7 +29,8 @@ NOTIFICATION_COLS = (
     'read_at',
     'expires_at',
     'dismissable',
-    'user',
+    'groupable',
+    'username',
 )
 
 
@@ -171,7 +172,7 @@ class Notification(object):
                       dismissable=self.dismissable,
                       groupable=self.groupable,
                       read_at=self._read_at,
-                      user=self.user)
+                      username=self.user)
         return self
 
     def delete(self):
