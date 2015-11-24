@@ -122,11 +122,10 @@ class Notification(object):
 
     def _mark_private_read(self, read_at):
         query = self.db.Update('notifications',
-                               read_at=':read_at',
-                               where='notification_id = :notification_id')
-        self.db.query(query,
-                      notification_id=self.notification_id,
-                      read_at=read_at)
+                               read_at='%(read_at)s',
+                               where='notification_id = %(notification_id)s')
+        self.db.execute(query, dict(notification_id=self.notification_id,
+                                    read_at=read_at))
         self._read_at = read_at
 
     def mark_read(self, read_at=None):
@@ -176,8 +175,8 @@ class Notification(object):
         return self
 
     def delete(self):
-        query = self.db.Delete('notifications', where='notification_id = ?')
-        self.db.query(query, self.notification_id)
+        query = self.db.Delete('notifications', where='notification_id = %s')
+        self.db.execute(query, (self.notification_id,))
         return self
 
     @staticmethod

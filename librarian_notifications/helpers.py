@@ -15,14 +15,13 @@ def get_notifications(db=None):
     if user:
         args = [user]
         query = db.Select(sets='notifications',
-                          where='(username IS NULL OR username = ?)')
+                          where='(username IS NULL OR username = %s)')
     else:
         args = []
         query = db.Select(sets='notifications', where='username IS NULL')
 
-    query.where += '(dismissable = 0 OR read_at IS NULL)'
-    db.query(query, *args)
-    for row in db.results:
+    query.where += '(dismissable = false OR read_at IS NULL)'
+    for row in db.fetchiter(query, args):
         notification = Notification(**to_dict(row))
         if not notification.is_read:
             yield notification
@@ -35,15 +34,14 @@ def _get_notification_count(db):
         args = [user]
         query = db.Select('COUNT(*) as count',
                           sets='notifications',
-                          where='(username IS NULL OR username = ?)')
+                          where='(username IS NULL OR username = %s)')
     else:
         args = []
         query = db.Select('COUNT(*) as count',
                           sets='notifications',
                           where='username IS NULL')
-    query.where += '(dismissable = 0 OR read_at IS NULL)'
-    db.query(query, *args)
-    unread_count = db.result.count
+    query.where += '(dismissable = false OR read_at IS NULL)'
+    unread_count = db.fetchone(query, args)
     unread_count -= len(request.user.options.get('notifications', {}))
     return unread_count
 
