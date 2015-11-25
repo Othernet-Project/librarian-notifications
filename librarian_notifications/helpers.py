@@ -41,7 +41,7 @@ def _get_notification_count(db):
                           sets='notifications',
                           where='username IS NULL')
     query.where += '(dismissable = false OR read_at IS NULL)'
-    unread_count = db.fetchone(query, args)
+    unread_count = db.fetchone(query, args)['count']
     unread_count -= len(request.user.options.get('notifications', {}))
     return unread_count
 
