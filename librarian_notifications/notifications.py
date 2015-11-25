@@ -152,7 +152,9 @@ class Notification(object):
                                 self.message)
 
     def save(self):
-        query = self.db.Replace('notifications', cols=NOTIFICATION_COLS)
+        query = self.db.Replace('notifications',
+                                constraints=['notification_id'],
+                                cols=NOTIFICATION_COLS)
         # allow both arbitary strings as well as json objects as notification
         # message
         if isinstance(self.message, basestring):
@@ -160,18 +162,18 @@ class Notification(object):
         else:
             message = json.dumps(self.message)
 
-        self.db.query(query,
-                      notification_id=self.notification_id,
-                      message=message,
-                      created_at=self.created_at,
-                      category=self.category,
-                      icon=self.icon,
-                      priority=self.priority,
-                      expires_at=self.expires_at,
-                      dismissable=self.dismissable,
-                      groupable=self.groupable,
-                      read_at=self._read_at,
-                      username=self.user)
+        self.db.execute(query,
+                        notification_id=self.notification_id,
+                        message=message,
+                        created_at=self.created_at,
+                        category=self.category,
+                        icon=self.icon,
+                        priority=self.priority,
+                        expires_at=self.expires_at,
+                        dismissable=self.dismissable,
+                        groupable=self.groupable,
+                        read_at=self._read_at,
+                        username=self.user)
         return self
 
     def delete(self):
