@@ -6,9 +6,9 @@ create table notifications
     category varchar,                                      -- notification category
     icon varchar,                                          -- css class that provides icon
     priority integer not null default 0,                   -- urgency level
-    created_at timestamp not null,                         -- timestamp when notification was created
-    read_at timestamp,                                     -- timestamp when notification was read
-    expires_at timestamp,                                  -- timestamp when notification expires
+    created_at timestamptz not null,                       -- timestamp when notification was created
+    read_at timestamptz,                                   -- timestamp when notification was read
+    expires_at timestamptz,                                -- timestamp when notification expires
     dismissable boolean not null default false,            -- indicates whether notification can be marked as read
     groupable boolean not null default true,               -- indicates whether notification can be gathered into groups
     username varchar                                       -- username of recipient
