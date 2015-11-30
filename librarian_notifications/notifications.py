@@ -162,18 +162,17 @@ class Notification(object):
         else:
             message = json.dumps(self.message)
 
-        self.db.execute(query,
-                        notification_id=self.notification_id,
-                        message=message,
-                        created_at=self.created_at,
-                        category=self.category,
-                        icon=self.icon,
-                        priority=self.priority,
-                        expires_at=self.expires_at,
-                        dismissable=self.dismissable,
-                        groupable=self.groupable,
-                        read_at=self._read_at,
-                        username=self.user)
+        self.db.execute(query, dict(notification_id=self.notification_id,
+                                    message=message,
+                                    created_at=self.created_at,
+                                    category=self.category,
+                                    icon=self.icon,
+                                    priority=self.priority,
+                                    expires_at=self.expires_at,
+                                    dismissable=self.dismissable,
+                                    groupable=self.groupable,
+                                    read_at=self._read_at,
+                                    username=self.user))
         return self
 
     def delete(self):
