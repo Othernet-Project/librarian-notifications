@@ -43,7 +43,7 @@ class Notification(object):
 
     def __init__(self, notification_id, message, created_at, category=None,
                  icon=None, priority=NORMAL, expires_at=None, dismissable=True,
-                 groupable=True, read_at=None, user=None, db=None):
+                 groupable=True, read_at=None, username=None, db=None):
         self.notification_id = notification_id
         try:
             self.message = json.loads(message)
@@ -58,7 +58,7 @@ class Notification(object):
         self.dismissable = dismissable
         self.groupable = groupable
         self._read_at = read_at
-        self.user = user
+        self.username = username
         self.db = db or request.db.notifications
 
     @classmethod
@@ -67,7 +67,7 @@ class Notification(object):
 
     @classmethod
     def send(cls, message, category=None, icon=None, priority=NORMAL,
-             expiration=0, dismissable=True, groupable=True, user=None,
+             expiration=0, dismissable=True, groupable=True, username=None,
              group=None, db=None):
         # TODO: if group is not None, query all users of the specified group
         # and create a notification instance for each member of the group
@@ -84,7 +84,7 @@ class Notification(object):
                        dismissable=dismissable,
                        groupable=groupable,
                        read_at=None,
-                       user=user,
+                       username=username,
                        db=db)
         instance.save()
         # when notification is sent, invoke subscribers of on_send with
@@ -100,7 +100,7 @@ class Notification(object):
 
     @property
     def is_shared(self):
-        return not self.user
+        return not self.username
 
     @property
     def read_at(self):
@@ -172,7 +172,7 @@ class Notification(object):
                                     dismissable=self.dismissable,
                                     groupable=self.groupable,
                                     read_at=self._read_at,
-                                    username=self.user))
+                                    username=self.username))
         return self
 
     def delete(self):
