@@ -115,10 +115,9 @@ class Notification(object):
         return self.read_at is not None
 
     def _mark_shared_read(self, read_at):
-        if 'notifications' not in request.user.options:
-            request.user.options['notifications'] = dict()
-
-        request.user.options['notifications'][self.notification_id] = read_at
+        notifications = request.user.options.get('notifications', {})
+        notifications[self.notification_id] = read_at
+        request.user.options['notifications'] = notifications
 
     def _mark_private_read(self, read_at):
         query = self.db.Update('notifications',
