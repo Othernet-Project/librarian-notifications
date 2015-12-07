@@ -188,7 +188,7 @@ class Notification(object):
         if expiration == 0:
             return None
 
-        return utcnow() + datetime.timedelta(expiration)
+        return utcnow() + datetime.timedelta(seconds=expiration)
 
 
 class NotificationGroup(object):
