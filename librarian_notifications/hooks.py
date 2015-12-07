@@ -1,4 +1,5 @@
 from .notifications import Notification
+from .tasks import notification_cleanup
 
 
 def initialize(supervisor):
@@ -11,3 +12,13 @@ def initialize(supervisor):
             supervisor.exts.cache.invalidate(key)
 
     Notification.on_send(invalidate_notification_cache)
+
+
+def init_complete(supervisor):
+    # schedule notification cleanup task
+    db = supervisor.exts.databases.notifications
+    default_expiry = supervisor.config['notifications.default_expiry']
+    supervisor.exts.tasks.schedule(notification_cleanup,
+                                   args=(db, default_expiry),
+                                   periodic=True,
+                                   delay=default_expiry)
