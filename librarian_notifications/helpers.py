@@ -9,6 +9,15 @@ def to_dict(row):
     return dict((key, row[key]) for key in row.keys())
 
 
+def get_user_groups(user):
+    if user:
+        groups = tuple(g.name for g in request.user.groups)
+    else:
+        user = None
+        groups = ('guest',)
+    return user, groups
+
+
 def get_notifications(db=None):
     db = db or request.db.notifications
     user = request.user.username if request.user.is_authenticated else None
