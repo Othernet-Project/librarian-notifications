@@ -2,7 +2,10 @@ from bottle import request
 
 from librarian_core.contrib.templates.decorators import template_helper
 
-from .notifications import Notification
+from .notifications import Notification, NOTIFICATION_COLS
+
+
+FIXED_COLS = ['n.' + c for c in NOTIFICATION_COLS]
 
 
 def to_dict(row):
