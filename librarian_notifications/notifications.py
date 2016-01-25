@@ -34,6 +34,14 @@ NOTIFICATION_COLS = (
 )
 
 
+TARGET_COLS = (
+    'target_id',
+    'notification_id',
+    'target_type',
+    'target'
+)
+
+
 class Notification(object):
     NORMAL = 0
     URGENT = 1
