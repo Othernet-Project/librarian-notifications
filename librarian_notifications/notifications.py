@@ -77,8 +77,24 @@ class Notification(object):
     def send(cls, message, category=None, icon=None, priority=NORMAL,
              expiration=0, dismissable=True, groupable=True, username=None,
              group=None, db=None):
-        # TODO: if group is not None, query all users of the specified group
-        # and create a notification instance for each member of the group
+        """ Creates a notification and a notification target
+
+        Short description of variables:
+            message:        text of the notification (may be json)
+            category:       category of the notification
+            icon:           unimplemented
+            priority:       unimplemented
+            dismissable:    whether the notification can be dismissed
+            groupable:      whether notifications may be stacked
+            username:       username target should be created for
+            group:          group name to target - special group "guest" for
+                            anonymous users
+
+        Notification targetting:
+            Targets are created for the notification once. First option is
+            username, second is group, and if none are provided, special group
+            "all" is used.
+        """
         if not isinstance(message, basestring):
             message = json.dumps(message)
         notification_id=cls.generate_unique_id()
