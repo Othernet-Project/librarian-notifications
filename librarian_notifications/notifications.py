@@ -96,29 +96,23 @@ class Notification(object):
                        db=db)
         instance.save()
         if group != None:
-            target = NotificationTarget(
-                cls.generate_unique_id(),
+            NotificationTarget.create(
                 notification_id,
                 target=group,
                 target_type='group',
             )
-            target.save()
-        elif username != None:
-            target = NotificationTarget(
-                cls.generate_unique_id(),
+        if username != None:
+            NotificationTarget.create(
                 notification_id,
-                target=group,
+                target=username,
                 target_type='user',
             )
-            target.save()
-        else:
-            target = NotificationTarget(
-                cls.generate_unique_id(),
+        if group == None and username == None:
+            NotificationTarget.create(
                 notification_id,
                 target='guest',
                 target_type='group',
             )
-            target.save()
         # when notification is sent, invoke subscribers of on_send with
         # notification instance as their only argument
         for callback in cls.on_send_callbacks:
