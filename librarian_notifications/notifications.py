@@ -73,8 +73,8 @@ class Notification(object):
         # and create a notification instance for each member of the group
         if not isinstance(message, basestring):
             message = json.dumps(message)
-
-        instance = cls(notification_id=cls.generate_unique_id(),
+        notification_id=cls.generate_unique_id()
+        instance = cls(notification_id=notification_id,
                        message=message,
                        created_at=utcnow(),
                        category=category,
@@ -87,6 +87,30 @@ class Notification(object):
                        username=username,
                        db=db)
         instance.save()
+        if group != None:
+            target = NotificationTarget(
+                cls.generate_unique_id(),
+                notification_id,
+                target=group,
+                target_type='group',
+            )
+            target.save()
+        elif username != None:
+            target = NotificationTarget(
+                cls.generate_unique_id(),
+                notification_id,
+                target=group,
+                target_type='user',
+            )
+            target.save()
+        else:
+            target = NotificationTarget(
+                cls.generate_unique_id(),
+                notification_id,
+                target='guest',
+                target_type='group',
+            )
+            target.save()
         # when notification is sent, invoke subscribers of on_send with
         # notification instance as their only argument
         for callback in cls.on_send_callbacks:
