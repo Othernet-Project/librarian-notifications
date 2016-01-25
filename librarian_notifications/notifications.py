@@ -191,6 +191,46 @@ class Notification(object):
         return utcnow() + datetime.timedelta(seconds=expiration)
 
 
+class NotificationTarget(object):
+
+    def __init__(self, target_id, notification_id, target, target_type='group', db=None):
+        self.target_id = target_id
+        self.target = target
+        self.target_type = target_type
+        self.notification_id = notification_id
+        self.db = db or request.db.notifications
+
+    @classmethod
+    def create(cls, notification_id, target, target_type='group', db=None):
+        instance = cls(target_id=cls.generate_unique_id(),
+                       notification_id=notification_id,
+                       target=target,
+                       target_type=target_type,
+                       db=db)
+        instance.save()
+        return instance
+
+    def save(self):
+        query = self.db.Replace('notification_targets',
+                                constraints=['target_id'],
+                                cols=TARGET_COLS)
+
+        self.db.execute(query, dict(target_id = self.target_id,
+                                    notification_id = self.notification_id,
+                                    target = self.target,
+                                    target_type = self.target_type))
+        return self
+
+    def delete(self):
+        query = self.db.Delete('notification-targetss', where='target_id = %s')
+        self.db.execute(query, (self.target_id,))
+        return self
+
+    @staticmethod
+    def generate_unique_id():
+        return uuid.uuid4().hex
+
+
 class NotificationGroup(object):
 
     proxied_attrs = (
