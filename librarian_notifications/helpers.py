@@ -21,16 +21,15 @@ def get_user_groups(user):
 def get_notifications(db=None):
     db = db or request.db.notifications
     user = request.user.username if request.user.is_authenticated else None
-    if user:
-        args = [user]
-        query = db.Select(sets='notifications',
-                          where='(username IS NULL OR username = %s)')
-    else:
-        args = []
-        query = db.Select(sets='notifications', where='username IS NULL')
-
-    query.where += '(dismissable = false OR read_at IS NULL)'
-    for row in db.fetchiter(query, args):
+    user, groups = get_user_groups(user)
+    target_query = db.Select(
+        sets='notification_targets t, notifications n',
+        what=FIXED_COLS,
+        where='((t.target_type = \'group\' AND t.target IN %s) OR'
+               '(t.target_type = \'user\' AND t.target = %s)) AND'
+               '(t.notification_id = n.notification_id) AND'
+               '(n.dismissable = false OR n.read_at IS NULL)')
+    for row in db.fetchiter(target_query, (groups, user)):
         notification = Notification(**to_dict(row))
         if not notification.is_read:
             yield notification
@@ -39,18 +38,14 @@ def get_notifications(db=None):
 def _get_notification_count(db):
     db = db or request.db.notifications
     user = request.user.username if request.user.is_authenticated else None
-    if user:
-        args = [user]
-        query = db.Select('COUNT(*) as count',
-                          sets='notifications',
-                          where='(username IS NULL OR username = %s)')
-    else:
-        args = []
-        query = db.Select('COUNT(*) as count',
-                          sets='notifications',
-                          where='username IS NULL')
-    query.where += '(dismissable = false OR read_at IS NULL)'
-    unread_count = db.fetchone(query, args)['count']
+    user, groups = get_user_groups(user)
+    count_query = db.Select('COUNT(*) as count',
+        sets='notification_targets t, notifications n',
+        where='((t.target_type = \'group\' AND t.target IN %s) OR'
+               '(t.target_type = \'user\' AND t.target = %s)) AND'
+               '(t.notification_id = n.notification_id) AND'
+               '(n.dismissable = false OR n.read_at IS NULL)')
+    unread_count = db.fetchone(count_query, (groups, user))['count']
     unread_count -= len(request.user.options.get('notifications', {}))
     return unread_count
 
