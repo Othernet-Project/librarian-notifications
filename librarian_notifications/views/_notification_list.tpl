@@ -45,7 +45,7 @@
                         </span>
                     </p>
                 </div>
-                % if not group.is_read:
+                % if not group.is_read and group.dismissable:
                 <button name="action" value="mark_read" class="notification-delete clean" type="submit" tabindex="${loop.index + 2}">
                     <span class="icon icon-no"></span>
                     <span class="notification-delete-label">${_('Dismiss')}</span>
