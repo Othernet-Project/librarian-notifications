@@ -237,6 +237,13 @@ class Notification(object):
             notification = Notification(db=db, **to_dict(row))
             yield notification
 
+    @classmethod
+    def delete_by_category(cls, category, db):
+        notifications = cls.fetch_by_category(category, db)
+        if not notifications:
+            return
+        for n in notifications:
+            n.delete()
 
 
 class NotificationTarget(object):
