@@ -115,6 +115,7 @@ class Notification(object):
             notification_id,
             target=username or group or 'all',
             target_type='user' if username else 'group',
+            db=db,
         )
         # when notification is sent, invoke subscribers of on_send with
         # notification instance as their only argument
