@@ -6,7 +6,7 @@
  * containing customized values _before_ this module.
  */
 /* line 4, ../../../src/scss/notifications.scss */
-.notification {
+.notification-default, .notification-diskspace {
   padding: 0.5rem;
   margin-bottom: 1rem;
   position: relative;
@@ -17,7 +17,7 @@
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 }
 /* line 15, ../../../src/scss/notifications.scss */
-.notification .notification-delete {
+.notification-default .notification-delete, .notification-diskspace .notification-delete {
   position: absolute;
   right: 0;
   top: 0;
@@ -27,30 +27,36 @@
   font-size: 180%;
 }
 /* line 25, ../../../src/scss/notifications.scss */
-.notification .notification-delete:hover, .notification .notification-delete:focus {
+.notification-default .notification-delete:hover, .notification-diskspace .notification-delete:hover, .notification-default .notification-delete:focus, .notification-diskspace .notification-delete:focus {
   background: #cc3737;
   color: #fff;
 }
 /* line 32, ../../../src/scss/notifications.scss */
-.notification .notification-body {
+.notification-default .notification-body, .notification-diskspace .notification-body {
   margin-right: 3rem;
 }
 /* line 36, ../../../src/scss/notifications.scss */
-.notification .notification-delete-label {
+.notification-default .notification-delete-label, .notification-diskspace .notification-delete-label {
   display: none;
 }
 /* line 40, ../../../src/scss/notifications.scss */
-.notification .notification-meta {
+.notification-default .notification-meta, .notification-diskspace .notification-meta {
   font-size: 90%;
   font-weight: bold;
   margin-bottom: 0.2rem;
 }
 
 /* line 50, ../../../src/scss/notifications.scss */
+.notification-diskspace {
+  background: #cc3737;
+  color: #fff;
+}
+
+/* line 56, ../../../src/scss/notifications.scss */
 #notifications-tab {
   padding-top: 2.6rem;
 }
-/* line 54, ../../../src/scss/notifications.scss */
+/* line 60, ../../../src/scss/notifications.scss */
 #notifications-tab .subtitle-buttons {
   top: 0;
   right: 0;
