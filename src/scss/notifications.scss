@@ -1,7 +1,7 @@
 @import "compass/css3";
 @import "base/params";
 
-.notification {
+.notification-default {
   // Basic geometry
   padding: 0.5rem;
   margin-bottom: 1rem;
@@ -45,6 +45,12 @@
     // Basic geometry
     margin-bottom: 0.2rem;
   }
+}
+
+.notification-diskspace {
+  @extend .notification-default;
+  background: $o-critical;
+  color: $o-negative-base;
 }
 
 #notifications-tab {
