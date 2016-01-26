@@ -229,8 +229,13 @@ class Notification(object):
 
     @classmethod
     def delete_by_category(cls, category, db):
-        query = db.Delete(sets='notifications', where='category = %s')
-        db.execute(query, category)
+        query = db.Delete( 'notifications',
+            where='notifications.category = %s')
+        target_query = db.Delete(
+            'notification_targets USING notifications',
+            where='notifications.category = %s')
+        db.execute(target_query, [category])
+        db.execute(query, [category])
 
 
 class NotificationTarget(object):
