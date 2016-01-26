@@ -224,6 +224,17 @@ class Notification(object):
 
         return utcnow() + datetime.timedelta(seconds=expiration)
 
+    @classmethod
+    def fetch_by_category(cls, category, db):
+        query = db.Select(
+            sets='notifications',
+            where='category = \'%s\' AND '
+                  '(dismissable = false OR read_at IS NULL)' % category)
+        for row in db.fetchiter(query, category):
+            notification = Notification(db=db, **to_dict(row))
+            yield notification
+
+
 
 class NotificationTarget(object):
 
