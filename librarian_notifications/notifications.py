@@ -42,6 +42,10 @@ TARGET_COLS = (
 )
 
 
+def to_dict(row):
+    return dict((key, row[key]) for key in row.keys())
+
+
 class Notification(object):
     NORMAL = 0
     URGENT = 1

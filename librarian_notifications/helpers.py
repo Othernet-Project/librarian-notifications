@@ -2,14 +2,10 @@ from bottle import request
 
 from librarian_core.contrib.templates.decorators import template_helper
 
-from .notifications import Notification, NOTIFICATION_COLS
+from .notifications import to_dict, Notification, NOTIFICATION_COLS
 
 
 FIXED_COLS = ['n.' + c for c in NOTIFICATION_COLS]
-
-
-def to_dict(row):
-    return dict((key, row[key]) for key in row.keys())
 
 
 def get_user_groups(user):
