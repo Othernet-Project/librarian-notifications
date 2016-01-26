@@ -209,7 +209,10 @@ class Notification(object):
         return self
 
     def delete(self):
+        target_query = self.db.Delete('notification_targets',
+                               where='notification_id = %s')
         query = self.db.Delete('notifications', where='notification_id = %s')
+        self.db.execute(target_query, (self.notification_id,))
         self.db.execute(query, (self.notification_id,))
         return self
 
@@ -267,7 +270,7 @@ class NotificationTarget(object):
         return self
 
     def delete(self):
-        query = self.db.Delete('notification-targetss', where='target_id = %s')
+        query = self.db.Delete('notification_targetss', where='target_id = %s')
         self.db.execute(query, (self.target_id,))
         return self
 
