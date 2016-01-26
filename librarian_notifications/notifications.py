@@ -228,22 +228,9 @@ class Notification(object):
         return utcnow() + datetime.timedelta(seconds=expiration)
 
     @classmethod
-    def fetch_by_category(cls, category, db):
-        query = db.Select(
-            sets='notifications',
-            where='category = \'%s\' AND '
-                  '(dismissable = false OR read_at IS NULL)' % category)
-        for row in db.fetchiter(query, category):
-            notification = Notification(db=db, **to_dict(row))
-            yield notification
-
-    @classmethod
     def delete_by_category(cls, category, db):
-        notifications = cls.fetch_by_category(category, db)
-        if not notifications:
-            return
-        for n in notifications:
-            n.delete()
+        query = db.Delete(sets='notifications', where='category = %s')
+        db.execute(query, category)
 
 
 class NotificationTarget(object):
