@@ -33,7 +33,7 @@
 
     <ul id="notification-list" class="notification-list">
         % for group in groups:
-        <li class="notification-${group.category or 'default'}">
+        <li class="notification notification-${group.category or 'default'} ${group.verbose_priority}">
             <form method="post" action="${i18n_url('notifications:list')}">
                 <input type="hidden" name="notification_id" value="${group.first_id}" />
                 <div class="notification-body">

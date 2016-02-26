@@ -51,6 +51,11 @@ class Notification(object):
     URGENT = 1
     CRITICAL = 2
     PRIORITIES = (NORMAL, URGENT, CRITICAL)
+    VERBOSE_PRIORITIES = {
+        NORMAL: 'normal',
+        URGENT: 'urgent',
+        CRITICAL: 'critical',
+    }
     on_send_callbacks = []
 
     def __init__(self, notification_id, message, created_at, category=None,
@@ -72,6 +77,10 @@ class Notification(object):
         self._read_at = read_at
         self.username = username
         self.db = db or request.db.notifications
+
+    @property
+    def verbose_priority(self):
+        return self.VERBOSE_PRIORITIES[self.priority]
 
     @classmethod
     def on_send(cls, callback):
@@ -289,6 +298,7 @@ class NotificationGroup(object):
         'icon',
         'category',
         'priority',
+        'verbose_priority',
     )
     # columns that require a value other than NULL in order to pass the check
     # for similarity
