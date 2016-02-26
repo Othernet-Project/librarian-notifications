@@ -110,7 +110,7 @@ class Notification(object):
         """
         if not isinstance(message, basestring):
             message = json.dumps(message)
-        notification_id=cls.generate_unique_id()
+        notification_id = cls.generate_unique_id()
         instance = cls(notification_id=notification_id,
                        message=message,
                        created_at=utcnow(),
@@ -219,7 +219,7 @@ class Notification(object):
 
     def delete(self):
         target_query = self.db.Delete('notification_targets',
-                               where='notification_id = %s')
+                                      where='notification_id = %s')
         query = self.db.Delete('notifications', where='notification_id = %s')
         self.db.execute(target_query, (self.notification_id,))
         self.db.execute(query, (self.notification_id,))
@@ -238,8 +238,8 @@ class Notification(object):
 
     @classmethod
     def delete_by_category(cls, category, db):
-        query = db.Delete( 'notifications',
-            where='notifications.category = %s')
+        query = db.Delete('notifications',
+                          where='notifications.category = %s')
         target_query = db.Delete(
             'notification_targets USING notifications',
             where='notifications.category = %s')
@@ -249,7 +249,8 @@ class Notification(object):
 
 class NotificationTarget(object):
 
-    def __init__(self, target_id, notification_id, target, target_type='group', db=None):
+    def __init__(self, target_id, notification_id, target,
+                 target_type='group', db=None):
         self.target_id = target_id
         self.target = target
         self.target_type = target_type
@@ -271,10 +272,10 @@ class NotificationTarget(object):
                                 constraints=['target_id'],
                                 cols=TARGET_COLS)
 
-        self.db.execute(query, dict(target_id = self.target_id,
-                                    notification_id = self.notification_id,
-                                    target = self.target,
-                                    target_type = self.target_type))
+        self.db.execute(query, dict(target_id=self.target_id,
+                                    notification_id=self.notification_id,
+                                    target=self.target,
+                                    target_type=self.target_type))
         return self
 
     def delete(self):
