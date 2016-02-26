@@ -47,10 +47,19 @@
   }
 }
 
-.notification-diskspace {
+.notification {
   @extend .notification-default;
-  background: $o-critical;
-  color: $o-negative-base;
+  &.critical {
+    background: $o-critical;
+    color: $o-negative-base;
+  }
+  &.urgent {
+    background: $o-warning;
+    color: $o-negative-base;
+  }
+  &.normal {
+    background: $o-negative-base;
+  }
 }
 
 #notifications-tab {
