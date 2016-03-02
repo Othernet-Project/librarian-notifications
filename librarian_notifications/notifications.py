@@ -240,9 +240,11 @@ class Notification(object):
     def delete_by_category(cls, category, db):
         query = db.Delete('notifications',
                           where='notifications.category = %s')
-        target_query = db.Delete(
-            'notification_targets USING notifications',
-            where='notifications.category = %s')
+        where = ('notifications.category = %s AND '
+                 'notification_targets.notification_id = '
+                 'notifications.notification_id')
+        target_query = db.Delete('notification_targets USING notifications',
+                                 where=where)
         db.execute(target_query, [category])
         db.execute(query, [category])
 
@@ -271,7 +273,6 @@ class NotificationTarget(object):
         query = self.db.Replace('notification_targets',
                                 constraints=['target_id'],
                                 cols=TARGET_COLS)
-
         self.db.execute(query, dict(target_id=self.target_id,
                                     notification_id=self.notification_id,
                                     target=self.target,
