@@ -2,7 +2,10 @@ from bottle import request
 
 from librarian_core.contrib.templates.decorators import template_helper
 
-from .notifications import to_dict, Notification, NOTIFICATION_COLS
+from .notifications import (to_dict,
+                            Notification,
+                            NotificationGroup,
+                            NOTIFICATION_COLS)
 
 
 FIXED_COLS = ['n.' + c for c in NOTIFICATION_COLS]
@@ -35,21 +38,20 @@ def get_notifications(db=None):
             yield notification
 
 
+def get_notification_groups():
+    key = 'notification_group_{0}'.format(request.session.id)
+    groups = request.app.supervisor.exts(onfail=None).cache.get(key)
+    if groups:
+        return groups
+
+    groups = NotificationGroup.group_by(get_notifications(),
+                                        by=('category', 'read_at'))
+    request.app.supervisor.exts.cache.set(key, groups)
+    return groups
+
+
 def _get_notification_count(db):
-    db = db or request.db.notifications
-    user = request.user.username if request.user.is_authenticated else None
-    user, groups = get_user_groups(user)
-    where_cond = ('((t.target_type = \'group\' AND t.target IN %s) OR'
-                  '(t.target_type = \'user\' AND t.target = %s) OR '
-                  '(t.target_type = \'group\' AND t.target = \'all\')) AND'
-                  '(t.notification_id = n.notification_id) AND'
-                  '(n.dismissable = false OR n.read_at IS NULL)')
-    count_query = db.Select('COUNT(*) as count',
-                            sets='notification_targets t, notifications n',
-                            where=where_cond)
-    unread_count = db.fetchone(count_query, (groups, user))['count']
-    unread_count -= len(request.user.options.get('notifications', {}))
-    return unread_count
+    return len(get_notification_groups())
 
 
 @template_helper

@@ -14,22 +14,13 @@ from bottle_utils.ajax import roca_view
 from librarian_core.contrib.templates.renderer import template
 from librarian_core.utils import utcnow
 
-from .helpers import get_notifications
+from .helpers import get_notifications, get_notification_groups
 from .notifications import NotificationGroup
 
 
 @roca_view('notification_list', '_notification_list', template_func=template)
 def notification_list():
-    key = 'notification_group_{0}'.format(request.session.id)
-    if request.app.supervisor.exts.is_installed('cache'):
-        groups = request.app.supervisor.exts.cache.get(key)
-        if groups:
-            return dict(groups=groups)
-
-    groups = NotificationGroup.group_by(get_notifications(),
-                                        by=('category', 'read_at'))
-    request.app.supervisor.exts.cache.set(key, groups)
-    return dict(groups=groups)
+    return dict(groups=get_notification_groups())
 
 
 def mark_read(notifications):
