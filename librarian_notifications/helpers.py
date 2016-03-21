@@ -24,15 +24,17 @@ def get_notifications(db=None):
     db = db or request.db.notifications
     user = request.user.username if request.user.is_authenticated else None
     user, groups = get_user_groups(user)
-    where_cond = ('((t.target_type = \'group\' AND t.target IN ?) OR '
+    where_cond = ('((t.target_type = \'group\' AND t.target IN ({0})) OR '
                   '(t.target_type = \'user\' AND t.target = ?) OR '
                   '(t.target_type = \'group\' AND t.target = \'all\')) AND'
                   '(t.notification_id = n.notification_id) AND'
-                  '(n.dismissable = false OR n.read_at IS NULL)')
+                  '(n.dismissable = 0 OR n.read_at IS NULL)')
+    where_cond = where_cond.format(', '.join('?' * len(groups)))
     target_query = db.Select(sets='notification_targets t, notifications n',
                              what=FIXED_COLS,
                              where=where_cond)
-    for row in db.fetchiter(target_query, (groups, user)):
+    params = groups + (user,)
+    for row in db.fetchiter(target_query, params):
         notification = Notification(**to_dict(row))
         if not notification.is_read:
             yield notification

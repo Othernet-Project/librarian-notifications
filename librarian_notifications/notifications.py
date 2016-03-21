@@ -239,10 +239,8 @@ class Notification(object):
     def delete_by_category(cls, category, db):
         query = db.Delete('notifications',
                           where='notifications.category = ?')
-        where = ('notifications.category = ? AND '
-                 'notification_targets.notification_id = '
-                 'notifications.notification_id')
-        target_query = db.Delete('notification_targets USING notifications',
+        where = ('notification_id IN (SELECT notification_id FROM notifications where category = ?)')
+        target_query = db.Delete('notification_targets',
                                  where=where)
         with db.transaction() as cursor:
             cursor.execute(target_query.serialize(), [category])
