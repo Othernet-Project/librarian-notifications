@@ -164,8 +164,8 @@ class Notification(object):
 
     def _mark_private_read(self, read_at):
         query = self.db.Update('notifications',
-                               read_at='%(read_at)s',
-                               where='notification_id = %(notification_id)s')
+                               read_at=':read_at',
+                               where='notification_id = :notification_id')
         self.db.execute(query, dict(notification_id=self.notification_id,
                                     read_at=read_at))
         self._read_at = read_at
@@ -194,9 +194,7 @@ class Notification(object):
                                 self.message)
 
     def save(self):
-        query = self.db.Replace('notifications',
-                                constraints=['notification_id'],
-                                cols=NOTIFICATION_COLS)
+        query = self.db.Replace('notifications', cols=NOTIFICATION_COLS)
         # allow both arbitary strings as well as json objects as notification
         # message
         if isinstance(self.message, basestring):
@@ -219,10 +217,11 @@ class Notification(object):
 
     def delete(self):
         target_query = self.db.Delete('notification_targets',
-                                      where='notification_id = %s')
-        query = self.db.Delete('notifications', where='notification_id = %s')
-        self.db.execute(target_query, (self.notification_id,))
-        self.db.execute(query, (self.notification_id,))
+                                      where='notification_id = ?')
+        query = self.db.Delete('notifications', where='notification_id = ?')
+        with self.db.transaction() as cursor:
+            cursor.execute(target_query, (self.notification_id,))
+            cursor.execute(query, (self.notification_id,))
         return self
 
     @staticmethod
@@ -239,14 +238,15 @@ class Notification(object):
     @classmethod
     def delete_by_category(cls, category, db):
         query = db.Delete('notifications',
-                          where='notifications.category = %s')
-        where = ('notifications.category = %s AND '
+                          where='notifications.category = ?')
+        where = ('notifications.category = ? AND '
                  'notification_targets.notification_id = '
                  'notifications.notification_id')
         target_query = db.Delete('notification_targets USING notifications',
                                  where=where)
-        db.execute(target_query, [category])
-        db.execute(query, [category])
+        with db.transaction() as cursor:
+            cursor.execute(target_query, [category])
+            cursor.execute(query, [category])
 
 
 class NotificationTarget(object):
@@ -270,9 +270,7 @@ class NotificationTarget(object):
         return instance
 
     def save(self):
-        query = self.db.Replace('notification_targets',
-                                constraints=['target_id'],
-                                cols=TARGET_COLS)
+        query = self.db.Replace('notification_targets', cols=TARGET_COLS)
         self.db.execute(query, dict(target_id=self.target_id,
                                     notification_id=self.notification_id,
                                     target=self.target,
@@ -280,7 +278,7 @@ class NotificationTarget(object):
         return self
 
     def delete(self):
-        query = self.db.Delete('notification_targetss', where='target_id = %s')
+        query = self.db.Delete('notification_targets', where='target_id = ?')
         self.db.execute(query, (self.target_id,))
         return self
 
